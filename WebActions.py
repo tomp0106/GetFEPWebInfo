@@ -12,6 +12,7 @@ class SeleniumAction:
         self.RetryNum=0
 
 
+
     def LoginAction(self):
         try:
             # 進行登錄作業
@@ -54,6 +55,7 @@ class SeleniumAction:
 
             else:
                 print('資料錯誤,重新搜尋!')
+                self.SearchMaterialAction(ProductGroupName,MaterialSN)
 
         except :
             print('無此料號!!!')
