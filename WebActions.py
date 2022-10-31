@@ -29,7 +29,8 @@ class SeleniumAction:
             print('登入失敗!!!!')
             return 0
 
-    def SearchMaterialAction(self,ProductGroupName,MaterialSN):
+    def SearchMaterialAction(self,MaterialSN):
+        SeachResult=''
         #轉移至料件頁面
         self.driver.get("http://118.163.153.124:8083/materials/materials.aspx")
         # 進行搜尋動作
@@ -46,19 +47,17 @@ class SeleniumAction:
 
             if MaterialTableTd[2].get_text()==MaterialSN:
                 MS=self.driver.find_element_by_id('ContentPlaceHolder1_GridView1_safety_stock_S_0').text
-
                 SeachResult='{},{},{}'.format(MaterialSN,MaterialTableTd[3].get_text(),MS)
                 print(SeachResult)
-                f=open('{}_SeachResult.csv'.format(ProductGroupName),'a+')
-                f.write(SeachResult+'\n')
-                f.close()
-
+                return SeachResult
             else:
                 print('資料錯誤,重新搜尋!')
-                self.SearchMaterialAction(ProductGroupName,MaterialSN)
+                self.SearchMaterialAction(MaterialSN)
+                return SeachResult
 
         except :
             print('無此料號!!!')
+            return SeachResult
 
 
     def CloseBrower(self):
