@@ -52,7 +52,6 @@ class SeleniumAction:
                 return SeachResult
             else:
                 print('資料錯誤,重新搜尋!')
-                self.SearchMaterialAction(MaterialSN)
                 return SeachResult
 
         except :
@@ -67,8 +66,8 @@ if __name__ == '__main__':
 
     se = SeleniumAction()
     se.LoginAction()
-    se.SearchMaterialAction('Test','A0003-000003')
-    se.SearchMaterialAction('Test', 'F0002-000001')
-    se.SearchMaterialAction('Test', 'E0017-000001')
+    # se.SearchMaterialAction('Test','A0003-000003')
+    # se.SearchMaterialAction('Test', 'F0002-000001')
+    # se.SearchMaterialAction('Test', 'E0017-000001')
     se.CloseBrower()
 

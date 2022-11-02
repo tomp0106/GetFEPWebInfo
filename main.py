@@ -1,49 +1,60 @@
 from WebActions import SeleniumAction
+from UI import SelectMenu
 import os
 
 #取得已建立的文件並顯示
-files = os.listdir('BOM')
-if len(files)==1:
-    MaterialSNFileName=files[0]
+FileNames = os.listdir('BOM')
+if len(FileNames)==1:
+    MaterialSNFileName=FileNames[0]
 else:
-    for x in range(len(files)):
-        print(str(x)+'.'+files[x])
+    app = SelectMenu(FileNames)
 
     #取得要獲取的料號資訊
-    MaterialSNFileNameNumber=input('請輸入要搜尋的群組數字\n')
+    MaterialSNFileNameList=app.SelectNameResult
 
-    if MaterialSNFileNameNumber.isnumeric():
-        MaterialSNFileName=files[eval(MaterialSNFileNameNumber)]
+    if len(MaterialSNFileNameList)>0:
+        print('已選擇項目:')
+        for SelectItem in MaterialSNFileNameList:
+            print(SelectItem)
     else:
-        print('輸入"數字"!!看不懂中文喔!!!')
-
-
-f=open('./BOM/'+MaterialSNFileName,'r')
-MaterialSNList=f.readlines()
-f.close()
-
-
-ProductGroupName=MaterialSNFileName[0:MaterialSNFileName.find('.')]
+        input('我都預設好給你了不要亂啦~~~~')
+        os._exit()
 
 
 #取得料件數量流程
 MaterialSeacher=SeleniumAction()
-
 print('進行登入作業....')
-
 LoginStus=MaterialSeacher.LoginAction()
 
-if LoginStus==1:
-    SeachResultList=[]
-    for MaterialSN in MaterialSNList:
-        SeachResult=MaterialSeacher.SearchMaterialAction(MaterialSN.strip())
-        if SeachResult!='':
-            SeachResultList.append(SeachResult)
+for MaterialSNFileName in MaterialSNFileNameList:
 
-    if len(SeachResultList)!=0:
-        f = open('{}_SeachResult.csv'.format(ProductGroupName), 'w+')
-        for SeachResultItem in SeachResultList:
-            f.write(SeachResultItem + '\n')
-        f.close()
+    f=open('./BOM/'+MaterialSNFileName,'r')
+    MaterialSNList=f.readlines()
+    f.close()
+
+    ProductGroupName=MaterialSNFileName[0:MaterialSNFileName.find('.')]
+    print('執行{}料件搜尋...\n'.format(MaterialSNFileName))
+    if LoginStus==1:
+        SeachResultList=[]
+        for MaterialSN in MaterialSNList:
+            SeachResult=MaterialSeacher.SearchMaterialAction(MaterialSN.strip())
+            if SeachResult!='':
+                SeachResultList.append(SeachResult)
+            else:
+                ErrRetryTimes=2
+                for x in range(ErrRetryTimes):
+                    SeachResult = MaterialSeacher.SearchMaterialAction(MaterialSN.strip())
+                    if SeachResult!='':
+                        SeachResultList.append(SeachResult)
+                        break
+                    if x ==ErrRetryTimes+1:
+                        print('')
+
+
+        if len(SeachResultList)!=0:
+            f = open('{}_SeachResult.csv'.format(ProductGroupName), 'w+')
+            for SeachResultItem in SeachResultList:
+                f.write(SeachResultItem + '\n')
+            f.close()
 
 MaterialSeacher.CloseBrower()
