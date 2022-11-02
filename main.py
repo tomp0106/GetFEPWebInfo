@@ -5,7 +5,7 @@ import os
 #取得已建立的文件並顯示
 FileNames = os.listdir('BOM')
 if len(FileNames)==1:
-    MaterialSNFileName=FileNames[0]
+    MaterialSNFileNameList=FileNames
 else:
     app = SelectMenu(FileNames)
 
